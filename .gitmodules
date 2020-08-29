@@ -1,0 +1,3 @@
+[submodule "cfront"]
+	path = cfront
+	url = ./vue_frontend/cfront

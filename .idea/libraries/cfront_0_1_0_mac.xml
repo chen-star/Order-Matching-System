@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="cfront-0.1.0-mac">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/vue_frontend/cfront/dist_electron/cfront-0.1.0-mac.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
