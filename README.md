@@ -76,3 +76,9 @@
 	- **Electron**: Build cross-platform desktop App with JavaScript
 	- **Element UI**: Common UI elements
 	- **Vue Bus**: Component communication
+
+
+## Order Service
+
+**Based on Spring Core + Spring Boot + Spring Cloud**
+
