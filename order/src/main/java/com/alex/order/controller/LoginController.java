@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import thirdparty.uuid.UuidGenerator;
 
-import static com.alex.order.bean.res.CounterRes.FAIL;
-import static com.alex.order.bean.res.CounterRes.RELOGIN;
+import static com.alex.order.bean.res.CounterRes.*;
 
 @RestController
 @RequestMapping("/login")
@@ -59,5 +58,11 @@ public class LoginController {
     @RequestMapping("/loginfail")
     public CounterRes loginFail(){
         return new CounterRes(RELOGIN,"Retry please",null);
+    }
+
+    @RequestMapping("/logout")
+    public CounterRes logout(@RequestParam String token){
+        accountService.logout(token);
+        return new CounterRes(SUCCESS, "Logout Succeed", null);
     }
 }
