@@ -26,4 +26,12 @@
         where uid = #{UId}
     </update>
 
+    <update id="updatePwd"
+            parameterType="java.util.HashMap">
+        update  t_user set
+                password = #{NewPwd}
+        where uid = #{UId}
+            and password = #{OldPwd}
+    </update>
+
 </mapper>

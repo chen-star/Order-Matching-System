@@ -82,10 +82,10 @@ public class AccountServiceImpl implements AccountService {
         return true;
     }
 
-//    @Override
-//    public boolean updatePwd(long uid, String oldPwd, String newPwd) {
-//        int res = DbUtil.updatePwd(uid,oldPwd,newPwd);
-//
-//        return res == 0 ? false : true;
-//    }
+    @Override
+    public boolean updatePwd(long uid, String oldPwd, String newPwd) {
+        int res = DbUtil.updatePwd(uid,oldPwd,newPwd);
+
+        return res != 0;
+    }
 }

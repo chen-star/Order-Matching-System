@@ -65,4 +65,16 @@ public class LoginController {
         accountService.logout(token);
         return new CounterRes(SUCCESS, "Logout Succeed", null);
     }
+
+    @RequestMapping("/pwdupdate")
+    public CounterRes pwdUpdate(@RequestParam  long uid,
+                                @RequestParam String oldpwd,
+                                @RequestParam String newpwd){
+        boolean result = accountService.updatePwd(uid, oldpwd, newpwd);
+        if (result) {
+            return new CounterRes(SUCCESS, "Password Updated", null);
+        } else {
+            return new CounterRes(FAIL, "Password Update Failed", null);
+        }
+    }
 }

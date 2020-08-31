@@ -9,4 +9,6 @@ public interface AccountService {
     boolean accountExistInCache(String token);
 
     boolean logout(String token);
+
+    boolean updatePwd(long uid, String oldPwd, String newPwd);
 }
