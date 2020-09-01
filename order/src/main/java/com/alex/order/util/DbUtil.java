@@ -1,6 +1,9 @@
 package com.alex.order.util;
 
 import com.alex.order.bean.res.Account;
+import com.alex.order.bean.res.OrderInfo;
+import com.alex.order.bean.res.PosiInfo;
+import com.alex.order.bean.res.TradeInfo;
 import com.alex.order.cache.CacheType;
 import com.alex.order.cache.RedisStringCache;
 import com.google.common.collect.ImmutableMap;
@@ -72,4 +75,121 @@ public class DbUtil {
                         "NewPwd", newPwd,
                         "OldPwd", oldPwd));
     }
+
+    ////////////////////////////// Balance ////////////////////////////////////////
+    public static long getBalance(long uid) {
+        Long res = dbUtil.getSqlSessionTemplate()
+                .selectOne("orderMapper.queryBalance",
+                        ImmutableMap.of("UId", uid));
+        if (res == null) {
+            return -1;
+        } else {
+            return res;
+        }
+    }
+
+    ////////////////////////////// Possession ////////////////////////////////////////
+    public static List<PosiInfo> getPosiList(long uid) {
+        // query cache
+        String suid = Long.toString(uid);
+        String posiS = RedisStringCache.get(suid, CacheType.POSI);
+        if (StringUtils.isEmpty(posiS)) {
+            // cache miss: query DB
+            List<PosiInfo> tmp = dbUtil.getSqlSessionTemplate().selectList(
+                    "orderMapper.queryPosi",
+                    ImmutableMap.of("UId", uid)
+            );
+            List<PosiInfo> result =
+                    CollectionUtils.isEmpty(tmp) ? Lists.newArrayList()
+                            : tmp;
+            // update cache
+            RedisStringCache.cache(suid, JsonUtil.toJson(result), CacheType.POSI);
+            return result;
+        } else {
+            // cache hit
+            return JsonUtil.fromJsonArr(posiS, PosiInfo.class);
+        }
+    }
+
+    ////////////////////////////// Order ////////////////////////////////////////
+    public static List<OrderInfo> getOrderList(long uid){
+        // query cache
+        String suid = Long.toString(uid);
+        String orderS = RedisStringCache.get(suid, CacheType.ORDER);
+//        if(StringUtils.isEmpty(orderS)){
+            // cache miss: query DB
+            List<OrderInfo> tmp = dbUtil.getSqlSessionTemplate().selectList(
+                    "orderMapper.queryOrder",
+                    ImmutableMap.of("UId", uid)
+            );
+            List<OrderInfo> result =
+                    CollectionUtils.isEmpty(tmp) ? Lists.newArrayList()
+                            : tmp;
+            // update cache
+            RedisStringCache.cache(suid,JsonUtil.toJson(result),CacheType.ORDER);
+            return result;
+//        }else {
+//            // cache hit
+//            return JsonUtil.fromJsonArr(orderS,OrderInfo.class);
+//        }
+    }
+
+    ////////////////////////////// Transaction ////////////////////////////////////////
+    public static List<TradeInfo> getTradeList(long uid){
+        // query cache
+        String suid = Long.toString(uid);
+        String tradeS = RedisStringCache.get(suid, CacheType.TRADE);
+//        if(StringUtils.isEmpty(tradeS)){
+            // cache miss: query DB
+            List<TradeInfo> tmp = dbUtil.getSqlSessionTemplate().selectList(
+                    "orderMapper.queryTrade",
+                    ImmutableMap.of("UId", uid)
+            );
+            List<TradeInfo> result =
+                    CollectionUtils.isEmpty(tmp) ? Lists.newArrayList()
+                            : tmp;
+            // update cache
+            RedisStringCache.cache(suid,JsonUtil.toJson(result),CacheType.TRADE);
+            return result;
+//        }else {
+//            // cache hit
+//            return JsonUtil.fromJsonArr(tradeS,TradeInfo.class);
+//        }
+    }
+
+    ////////////////////////////// Order ///////////////////////////////////////
+//    public static int saveOrder(OrderCmd orderCmd){
+//        Map<String, Object> param = Maps.newHashMap();
+//        param.put("UId",orderCmd.uid);
+//        param.put("Code",orderCmd.code);
+//        param.put("Direction",orderCmd.direction.getDirection());
+//        param.put("Type",orderCmd.orderType.getType());
+//        param.put("Price",orderCmd.price);
+//        param.put("OCount",orderCmd.volume);
+//        param.put("TCount",0);
+//        param.put("Status", OrderStatus.NOT_SET.getCode());
+//
+//        param.put("Data",TimeformatUtil.yyyyMMdd(orderCmd.timestamp));
+//        param.put("Time",TimeformatUtil.hhMMss(orderCmd.timestamp));
+//
+//        int count = dbUtil.getSqlSessionTemplate().insert(
+//                "orderMapper.saveOrder",param
+//        );
+//        //判断是否成功
+//        if(count > 0){
+//            return Integer.parseInt(param.get("ID").toString());
+//        }else {
+//            return -1;
+//        }
+//    }
+//
+//
+//
+//    //////////////////////////////股票信息查询///////////////////////////////////////
+//    public static List<Map<String,Object>> queryAllSotckInfo(){
+//        return dbUtil.getSqlSessionTemplate()
+//                .selectList("stockMapper.queryStock");
+//    }
+
+
 }

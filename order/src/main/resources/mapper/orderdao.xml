@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="orderMapper">
+
+    <select id="queryBalance"
+            resultType="long">
+    select
+        t.balance
+    from t_user as t
+    where t.uid = #{UId, jdbcType=BIGINT}
+    </select>
+
+
+    <select id="queryPosi"
+            resultType="com.alex.order.bean.res.PosiInfo">
+    select
+        t.id,
+        t.uid,
+        t.code,
+        s.name,
+        t.cost,
+        t.count
+    from t_posi as t, t_stock as s
+    where t.uid = #{UId, jdbcType=BIGINT} and t.code = s.code
+    </select>
+
+    <select id="queryOrder"
+            resultType="com.alex.order.bean.res.OrderInfo">
+    select
+        t.id,
+        t.uid,
+        t.code,
+        s.name,
+        t.direction,
+        t.type,
+        t.price,
+        t.ocount,
+        t.status,
+        t.date,
+        t.time
+    from t_order as t, t_stock as s
+    where t.uid = #{UId, jdbcType=BIGINT} and t.code = s.code
+    </select>
+
+
+    <select id="queryTrade"
+            resultType="com.alex.order.bean.res.TradeInfo">
+    select
+        t.id,
+        t.uid,
+        t.code,
+        s.name,
+        t.direction,
+        t.price,
+        t.tcount,
+        t.date,
+        t.time
+    from t_trade as t, t_stock as s
+    where t.uid = #{UId, jdbcType=BIGINT} and t.code = s.code
+    </select>
+
+</mapper>
