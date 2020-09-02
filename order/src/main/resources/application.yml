@@ -27,4 +27,10 @@ counter:
   id: 1000
   dataCenterId: 0
   workerId: 0
+  gatewayid: 1001
+  checksum: thirdparty.checksum.ByteCheckSum
+  bodycodec: thirdparty.codec.BodyCodec
+  msgcodec: thirdparty.codec.MsgCodec
+  sendip: 127.0.0.1
+  sendport: 8091
 

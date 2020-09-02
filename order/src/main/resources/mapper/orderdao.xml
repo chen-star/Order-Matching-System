@@ -24,8 +24,34 @@
         t.cost,
         t.count
     from t_posi as t, t_stock as s
-    where t.uid = #{UId, jdbcType=BIGINT} and t.code = s.code
+    where t.uid = #{UId, jdbcType=BIGINT}
+        <if test="Code != null and Code != '' ">
+            and t.code = #{Code}
+        </if>
+        and t.code = s.code
     </select>
+
+    <update id="updatePosi" parameterType="Map">
+        update t_posi
+            set count = #{Count, jdbcType=BIGINT}
+                cost = #{Cost, jdbcType=BIGINT}
+        where uid = #{UId, jdbcType=BIGINT}
+                and code = #{Code}
+    </update>
+
+    <insert id="insertPosi" parameterType="Map">
+        insert into t_posi (
+            uid,
+            code,
+            cost,
+            count
+         ) values (
+            #{UId},
+            #{Code},
+            #{Cost},
+            #{Count}
+         )
+    </insert>
 
     <select id="queryOrder"
             resultType="com.alex.order.bean.res.OrderInfo">
@@ -44,6 +70,12 @@
     from t_order as t, t_stock as s
     where t.uid = #{UId, jdbcType=BIGINT} and t.code = s.code
     </select>
+
+
+    <update id="updateBalance" parameterType="Map">
+        update t_user set balance = balance + #{Balance, jdbcType=BIGINT}
+        where uid = #{UId, jdbcType=BIGINT}
+    </update>
 
 
     <select id="queryTrade"

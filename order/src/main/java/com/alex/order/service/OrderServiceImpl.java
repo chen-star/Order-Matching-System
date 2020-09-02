@@ -4,7 +4,9 @@ import com.alex.order.bean.res.OrderInfo;
 import com.alex.order.bean.res.PosiInfo;
 import com.alex.order.bean.res.TradeInfo;
 import com.alex.order.config.CounterConfig;
+import com.alex.order.config.GatewayConn;
 import com.alex.order.util.DbUtil;
+import com.alex.order.util.IDConverter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,10 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private CounterConfig config;
 
+    @Autowired
+    private GatewayConn gatewayConn;
+
+
     @Override
     public boolean sendOrder(long uid, short type, long timestamp, String code,
                              byte direction, long price, long volume, byte ordertype) {
@@ -61,7 +67,26 @@ public class OrderServiceImpl implements OrderService {
         if(oid < 0){
             return false;
         }else {
-            //TODO 发送网关
+            // Send to Gateway
+            // 1.调整资金持仓数据
+            if (orderCmd.direction == OrderDirection.BUY) {
+                //减少资金
+                DbUtil.minusBalance(orderCmd.uid, orderCmd.price * orderCmd.volume);
+            } else if (orderCmd.direction == OrderDirection.SELL) {
+                //减少持仓
+                DbUtil.minusPosi(orderCmd.uid, orderCmd.code, orderCmd.volume, orderCmd.price);
+            } else {
+                log.error("wrong direction[{}],ordercmd:{}", orderCmd.direction, orderCmd);
+                return false;
+            }
+
+            //2.生成全局ID  组装ID long [  柜台ID,  委托ID ]
+            orderCmd.oid = IDConverter.combineInt2Long(config.getId(), oid);
+
+            //3.打包委托(ordercmd --> commonmsg -->tcp数据流)
+            // 4.发送数据
+            gatewayConn.sendOrder(orderCmd);
+
             log.info(orderCmd);
             return true;
         }

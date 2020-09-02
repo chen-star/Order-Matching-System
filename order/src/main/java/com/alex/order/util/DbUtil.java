@@ -90,6 +90,15 @@ public class DbUtil {
         }
     }
 
+    public static void addBalance(long uid, long balance) {
+        dbUtil.getSqlSessionTemplate().update("orderMapper.updateBalance",
+                ImmutableMap.of("UId", uid, "Balance", balance));
+    }
+
+    public static void minusBalance(long uid, long balance) {
+        addBalance(uid, -balance);
+    }
+
     ////////////////////////////// Possession ////////////////////////////////////////
     public static List<PosiInfo> getPosiList(long uid) {
         // query cache
@@ -111,6 +120,52 @@ public class DbUtil {
 //            // cache hit
 //            return JsonUtil.fromJsonArr(posiS, PosiInfo.class);
 //        }
+    }
+
+    public static PosiInfo getPosi(long uid, String code) {
+        return dbUtil.getSqlSessionTemplate().selectOne("orderMapper.queryPosi",
+                ImmutableMap.of("UId", uid, "Code", code));
+    }
+
+    public static void addPosi(long uid, String code, long volume, long price) {
+        //持仓是否存在
+        PosiInfo posiInfo = getPosi(uid, code);
+        if (posiInfo == null) {
+            //新增一条持仓
+            insertPosi(uid, code, volume, price);
+        } else {
+            //修改持仓
+            posiInfo.setCount(posiInfo.getCount() + volume);
+            posiInfo.setCost(posiInfo.getCost() + price * volume);
+//            if(posiInfo.getCount() == 0){
+//                deletePosi(posi);
+//            }else {
+            updatePosi(posiInfo);
+//            }
+
+        }
+    }
+
+    public static void minusPosi(long uid, String code, long volume, long price) {
+        addPosi(uid, code, -volume, price);
+    }
+
+    private static void updatePosi(PosiInfo posiInfo) {
+        dbUtil.getSqlSessionTemplate().insert("orderMapper.updatePosi",
+                ImmutableMap.of("UId", posiInfo.getUid(),
+                        "Code", posiInfo.getCode(),
+                        "Count", posiInfo.getCount(),
+                        "Cost", posiInfo.getCost())
+        );
+    }
+
+    private static void insertPosi(long uid, String code, long volume, long price) {
+        dbUtil.getSqlSessionTemplate().insert("orderMapper.insertPosi",
+                ImmutableMap.of("UId", uid,
+                        "Code", code,
+                        "Count", volume,
+                        "Cost", volume * price)
+        );
     }
 
     ////////////////////////////// Order ////////////////////////////////////////
