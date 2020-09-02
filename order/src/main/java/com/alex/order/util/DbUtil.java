@@ -15,6 +15,8 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import thirdparty.order.OrderCmd;
+import thirdparty.order.OrderStatus;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -93,7 +95,7 @@ public class DbUtil {
         // query cache
         String suid = Long.toString(uid);
         String posiS = RedisStringCache.get(suid, CacheType.POSI);
-        if (StringUtils.isEmpty(posiS)) {
+//        if (StringUtils.isEmpty(posiS)) {
             // cache miss: query DB
             List<PosiInfo> tmp = dbUtil.getSqlSessionTemplate().selectList(
                     "orderMapper.queryPosi",
@@ -105,10 +107,10 @@ public class DbUtil {
             // update cache
             RedisStringCache.cache(suid, JsonUtil.toJson(result), CacheType.POSI);
             return result;
-        } else {
-            // cache hit
-            return JsonUtil.fromJsonArr(posiS, PosiInfo.class);
-        }
+//        } else {
+//            // cache hit
+//            return JsonUtil.fromJsonArr(posiS, PosiInfo.class);
+//        }
     }
 
     ////////////////////////////// Order ////////////////////////////////////////
@@ -158,38 +160,38 @@ public class DbUtil {
     }
 
     ////////////////////////////// Order ///////////////////////////////////////
-//    public static int saveOrder(OrderCmd orderCmd){
-//        Map<String, Object> param = Maps.newHashMap();
-//        param.put("UId",orderCmd.uid);
-//        param.put("Code",orderCmd.code);
-//        param.put("Direction",orderCmd.direction.getDirection());
-//        param.put("Type",orderCmd.orderType.getType());
-//        param.put("Price",orderCmd.price);
-//        param.put("OCount",orderCmd.volume);
-//        param.put("TCount",0);
-//        param.put("Status", OrderStatus.NOT_SET.getCode());
-//
-//        param.put("Data",TimeformatUtil.yyyyMMdd(orderCmd.timestamp));
-//        param.put("Time",TimeformatUtil.hhMMss(orderCmd.timestamp));
-//
-//        int count = dbUtil.getSqlSessionTemplate().insert(
-//                "orderMapper.saveOrder",param
-//        );
-//        //判断是否成功
-//        if(count > 0){
-//            return Integer.parseInt(param.get("ID").toString());
-//        }else {
-//            return -1;
-//        }
-//    }
-//
-//
-//
-//    //////////////////////////////股票信息查询///////////////////////////////////////
-//    public static List<Map<String,Object>> queryAllSotckInfo(){
-//        return dbUtil.getSqlSessionTemplate()
-//                .selectList("stockMapper.queryStock");
-//    }
+    public static int saveOrder(OrderCmd orderCmd){
+        Map<String, Object> param = Maps.newHashMap();
+        param.put("UId",orderCmd.uid);
+        param.put("Code",orderCmd.code);
+        param.put("Direction",orderCmd.direction.getDirection());
+        param.put("Type",orderCmd.orderType.getType());
+        param.put("Price",orderCmd.price);
+        param.put("OCount",orderCmd.volume);
+        param.put("TCount",0);
+        param.put("Status", OrderStatus.NOT_SET.getCode());
+
+        param.put("Data", TimeFormatUtil.yyyyMMdd(orderCmd.timestamp));
+        param.put("Time", TimeFormatUtil.hhMMss(orderCmd.timestamp));
+
+        int count = dbUtil.getSqlSessionTemplate().insert(
+                "orderMapper.saveOrder",param
+        );
+
+        if(count > 0){
+            return Integer.parseInt(param.get("ID").toString());
+        }else {
+            return -1;
+        }
+    }
+
+
+
+    ////////////////////////////// query stock info ///////////////////////////////////////
+    public static List<Map<String,Object>> queryAllSotckInfo(){
+        return dbUtil.getSqlSessionTemplate()
+                .selectList("stockMapper.queryStock");
+    }
 
 
 }

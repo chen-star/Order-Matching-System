@@ -21,8 +21,8 @@ public interface OrderService {
     List<TradeInfo> getTradeList(long uid);
 
     //发送委托
-//    boolean sendOrder(long uid,short type,long timestamp,
-//                      int code,byte direction,long price,long volume,
-//                      byte ordertype);
+    boolean sendOrder(long uid, short type, long timestamp,
+                      String code, byte direction, long price, long volume,
+                      byte ordertype);
 
 }

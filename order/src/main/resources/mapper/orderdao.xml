@@ -62,4 +62,32 @@
     where t.uid = #{UId, jdbcType=BIGINT} and t.code = s.code
     </select>
 
+    <insert id="saveOrder" parameterType="Map">
+        insert into t_order(
+            uid,
+            code,
+            direction,
+            type,
+            price,
+            ocount,
+            status,
+            date,
+            time
+        ) values (
+            #{UId},
+            #{Code},
+            #{Direction},
+            #{Type},
+            #{Price},
+            #{OCount},
+            #{Status},
+            #{Date},
+            #{Time}
+        )
+        <selectKey keyColumn="id" resultType="int"
+                   keyProperty="ID" order="AFTER">
+            select last_insert_rowid()
+        </selectKey>
+    </insert>
+
 </mapper>

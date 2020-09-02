@@ -3,9 +3,15 @@ package com.alex.order.service;
 import com.alex.order.bean.res.OrderInfo;
 import com.alex.order.bean.res.PosiInfo;
 import com.alex.order.bean.res.TradeInfo;
+import com.alex.order.config.CounterConfig;
 import com.alex.order.util.DbUtil;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import thirdparty.order.CmdType;
+import thirdparty.order.OrderCmd;
+import thirdparty.order.OrderDirection;
+import thirdparty.order.OrderType;
 
 import java.util.List;
 
@@ -32,34 +38,34 @@ public class OrderServiceImpl implements OrderService {
         return DbUtil.getTradeList(uid);
     }
 
-//    @Autowired
-//    private CounterConfig config;
-//
-//    @Override
-//    public boolean sendOrder(long uid, short type, long timestamp, int code,
-//                             byte direction, long price, long volume, byte ordertype) {
-//        final OrderCmd orderCmd = OrderCmd.builder()
-//                .type(CmdType.of(type))
-//                .timestamp(timestamp)
-//                .mid(config.getId())
-//                .uid(uid)
-//                .code(code)
-//                .direction(OrderDirection.of(ordertype))
-//                .price(price)
-//                .volume(volume)
-//                .orderType(OrderType.of(ordertype))
-//                .build();
-//
-//        //1.入库
-//        int oid = DbUtil.saveOrder(orderCmd);
-//        if(oid < 0){
-//            return false;
-//        }else {
-//            //TODO 发送网关
-//            log.info(orderCmd);
-//            return true;
-//        }
-//
-//
-//    }
+    @Autowired
+    private CounterConfig config;
+
+    @Override
+    public boolean sendOrder(long uid, short type, long timestamp, String code,
+                             byte direction, long price, long volume, byte ordertype) {
+        final OrderCmd orderCmd = OrderCmd.builder()
+                .type(CmdType.of(type))
+                .timestamp(timestamp)
+                .mid(config.getId())
+                .uid(uid)
+                .code(code)
+                .direction(OrderDirection.of(ordertype))
+                .price(price)
+                .volume(volume)
+                .orderType(OrderType.of(ordertype))
+                .build();
+
+        //1.入库
+        int oid = DbUtil.saveOrder(orderCmd);
+        if(oid < 0){
+            return false;
+        }else {
+            //TODO 发送网关
+            log.info(orderCmd);
+            return true;
+        }
+
+
+    }
 }

@@ -24,6 +24,7 @@ cacheexpire:
   order: 36000
 
 counter:
+  id: 1000
   dataCenterId: 0
   workerId: 0
 

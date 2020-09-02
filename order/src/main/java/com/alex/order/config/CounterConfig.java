@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class CounterConfig {
 
+    @Value("${counter.id}")
+    private short id;
+
     @Value("${counter.dataCenterId}")
     private long dataCenterId;
 
