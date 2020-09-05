@@ -3,7 +3,7 @@
     <id>1001</id>
     <recvport>8091</recvport>
 
-<!--    <fetchservport>8890</fetchservport>-->
+    <fetchservport>8890</fetchservport>
 
 <!--    <counterlist>-->
 <!--        <counter id="1" conn="127.0.0.1:8091" limiter="50" />-->

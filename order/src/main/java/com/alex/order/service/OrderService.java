@@ -25,4 +25,5 @@ public interface OrderService {
                       String code, byte direction, long price, long volume,
                       byte ordertype);
 
+    boolean cancelOrder(int uid, int counteroid, String code);
 }

@@ -1,6 +1,8 @@
 package com.alex.gateway.bean;
 
 import com.alex.gateway.bean.handler.ConnHandler;
+import com.alipay.sofa.rpc.config.ProviderConfig;
+import com.alipay.sofa.rpc.config.ServerConfig;
 import io.vertx.core.Vertx;
 import io.vertx.core.net.NetServer;
 import lombok.Getter;
@@ -11,6 +13,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import thirdparty.checksum.ICheckSum;
 import thirdparty.codec.IBodyCodec;
+import thirdparty.fetchsurv.IFetchService;
 
 import java.io.File;
 
@@ -24,7 +27,7 @@ public class GatewayConfig {
     private int recvPort;
 
 
-    //TODO 柜台列表 数据库连接
+    private int fetchServPort;
 
     @Setter
     private IBodyCodec bodyCodec;
@@ -45,6 +48,8 @@ public class GatewayConfig {
         recvPort = Integer.parseInt(root.element("recvport").getText());
         System.out.println("GateWay ID:" + id + " Port: " + recvPort);
 
+        fetchServPort = Integer.parseInt(root.element("fetchservport").getText());
+
         //TODO 数据库连接 连接柜台列表
 
     }
@@ -53,7 +58,20 @@ public class GatewayConfig {
         //1.启动TCP服务监听
         initRecv();
 
-        //TODO 2.排队机交互
+        //2.排队机交互
+        initFetchServ();
+    }
+
+    private void initFetchServ() {
+        ServerConfig rpcConfig = new ServerConfig()
+                .setPort(fetchServPort)
+                .setProtocol("bolt");
+
+        ProviderConfig<IFetchService> providerConfig = new ProviderConfig<IFetchService>()
+                .setInterfaceId(IFetchService.class.getName())
+                .setRef(() -> OrderCmdContainer.getInstance().getAll())
+                .setServer(rpcConfig);
+        providerConfig.export();
     }
 
     private void initRecv() {

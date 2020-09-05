@@ -7,6 +7,7 @@ import com.alex.order.config.CounterConfig;
 import com.alex.order.config.GatewayConn;
 import com.alex.order.util.DbUtil;
 import com.alex.order.util.IDConverter;
+import io.vertx.core.buffer.Buffer;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,8 @@ import thirdparty.order.OrderDirection;
 import thirdparty.order.OrderType;
 
 import java.util.List;
+
+import static com.alex.order.bean.MatchDataConsumer.ORDER_DATA_CACHE_ADDR;
 
 @Log4j2
 @Service
@@ -83,7 +86,20 @@ public class OrderServiceImpl implements OrderService {
             //2.生成全局ID  组装ID long [  柜台ID,  委托ID ]
             orderCmd.oid = IDConverter.combineInt2Long(config.getId(), oid);
 
+            byte[] serialize = null;
+            try {
+                serialize = config.getBodyCodec().serialize(orderCmd);
+            } catch (Exception e) {
+                log.error(e);
+            }
+            if (serialize == null) {
+                return false;
+            }
+            config.getVertx().eventBus().send(ORDER_DATA_CACHE_ADDR, Buffer.buffer(serialize));
+
             //3.打包委托(ordercmd --> commonmsg -->tcp数据流)
+
+
             // 4.发送数据
             gatewayConn.sendOrder(orderCmd);
 
@@ -92,5 +108,21 @@ public class OrderServiceImpl implements OrderService {
         }
 
 
+    }
+
+    @Override
+    public boolean cancelOrder(int uid, int counteroid, String code) {
+
+        final OrderCmd orderCmd = OrderCmd.builder()
+                .uid(uid)
+                .code(code)
+                .type(CmdType.CANCEL_ORDER)
+                .oid(IDConverter.combineInt2Long(config.getId(), counteroid))
+                .build();
+
+        log.info("recv cancel order :{}", orderCmd);
+
+        gatewayConn.sendOrder(orderCmd);
+        return true;
     }
 }

@@ -1,5 +1,6 @@
 package com.alex.order.config;
 
+import com.alex.order.bean.MqttBusConsumer;
 import io.vertx.core.Vertx;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
@@ -24,6 +25,18 @@ public class CounterConfig {
 
     @Value("${counter.workerId}")
     private long workerId;
+
+    ///////////////////// websocket ////////////////////////////////
+    @Value("${counter.pubport}")
+    private int pubPort;
+
+    /////////////////// Bus //////////////////////
+
+    @Value("${counter.subbusip}")
+    private String subBusIp;
+
+    @Value("${counter.subbusport}")
+    private int subBusPort;
 
     ///////////////////// Gateway ////////////////////////////////
 
@@ -75,5 +88,8 @@ public class CounterConfig {
         } catch (Exception e) {
             log.error("init config error ", e);
         }
+
+
+        new MqttBusConsumer(subBusIp, subBusPort, String.valueOf(id),  msgCodec, cs, vertx).startup();
     }
 }

@@ -33,4 +33,7 @@ counter:
   msgcodec: thirdparty.codec.MsgCodec
   sendip: 127.0.0.1
   sendport: 8091
+  subbusip: localhost
+  subbusport: 9993
+  pubport: 8501
 

@@ -72,6 +72,11 @@
     </select>
 
 
+    <update id="updateOrder" parameterType="Map">
+        update t_order set status=#{Status}
+        where where id=#{Id}
+    </update>
+
     <update id="updateBalance" parameterType="Map">
         update t_user set balance = balance + #{Balance, jdbcType=BIGINT}
         where uid = #{UId, jdbcType=BIGINT}
@@ -115,6 +120,34 @@
             #{Status},
             #{Date},
             #{Time}
+        )
+        <selectKey keyColumn="id" resultType="int"
+                   keyProperty="ID" order="AFTER">
+            select last_insert_rowid()
+        </selectKey>
+    </insert>
+
+    <insert id="saveTrade" parameterType="Map">
+        insert into t_trade(
+        id,
+        uid,
+        code,
+        direction,
+        price,
+        tcount,
+        oid,
+        date,
+        time
+        ) values (
+        #{Id},
+        #{UId},
+        #{Code},
+        #{Direction},
+        #{Price},
+        #{TCount},
+        #{OId},
+        #{Date},
+        #{Time}
         )
         <selectKey keyColumn="id" resultType="int"
                    keyProperty="ID" order="AFTER">

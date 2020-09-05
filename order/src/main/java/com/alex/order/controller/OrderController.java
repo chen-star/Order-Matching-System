@@ -24,7 +24,7 @@ public class OrderController {
     private StockCache stockCache;
 
     @RequestMapping("/code")
-    public CounterRes stockQuery(@RequestParam String key){
+    public CounterRes stockQuery(@RequestParam String key) {
         Collection<StockInfo> stocks = stockCache.getStocks(key);
         return new CounterRes(stocks);
     }
@@ -36,14 +36,14 @@ public class OrderController {
 
     @RequestMapping("/balance")
     public CounterRes balanceQuery(@RequestParam long uid)
-            throws Exception{
+            throws Exception {
         long balance = orderService.getBalance(uid);
         return new CounterRes(balance);
     }
 
     @RequestMapping("/posiinfo")
     public CounterRes posiQuery(@RequestParam long uid)
-            throws Exception{
+            throws Exception {
         log.info(uid);
         List<PosiInfo> postList = orderService.getPostList(uid);
         return new CounterRes(postList);
@@ -51,14 +51,14 @@ public class OrderController {
 
     @RequestMapping("/orderinfo")
     public CounterRes orderQuery(@RequestParam long uid)
-            throws Exception{
+            throws Exception {
         List<OrderInfo> orderList = orderService.getOrderList(uid);
         return new CounterRes(orderList);
     }
 
     @RequestMapping("/tradeinfo")
     public CounterRes tradeQuery(@RequestParam long uid)
-            throws Exception{
+            throws Exception {
         List<TradeInfo> tradeList = orderService.getTradeList(uid);
         return new CounterRes(tradeList);
     }
@@ -73,14 +73,27 @@ public class OrderController {
             @RequestParam long price,
             @RequestParam long volume,
             @RequestParam byte ordertype
-    ){
-        if(orderService.sendOrder(uid,type,timestamp,code,direction,price,
-                volume,ordertype)){
-            return new CounterRes(SUCCESS,"save success",null);
-        }else {
-            return new CounterRes(FAIL,"save failed",null);
+    ) {
+        if (orderService.sendOrder(uid, type, timestamp, code, direction, price,
+                volume, ordertype)) {
+            return new CounterRes(SUCCESS, "save success", null);
+        } else {
+            return new CounterRes(FAIL, "save failed", null);
         }
 
     }
+
+    @RequestMapping("/cancelorder")
+    public CounterRes cancelOrder(@RequestParam int uid,
+                                  @RequestParam int counteroid,
+                                  @RequestParam String code) {
+
+        if (orderService.cancelOrder(uid, counteroid, code)) {
+            return new CounterRes(SUCCESS, "success", null);
+        } else {
+            return new CounterRes(FAIL, "failed", null);
+        }
+    }
+
 
 }

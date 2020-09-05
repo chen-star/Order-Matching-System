@@ -15,6 +15,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import thirdparty.hq.MatchData;
 import thirdparty.order.OrderCmd;
 import thirdparty.order.OrderStatus;
 
@@ -33,6 +34,16 @@ public class DbUtil {
 
     @Autowired
     private SqlSessionTemplate sqlSessionTemplate;
+
+    public static void updateOrder(long uid, int oid, OrderStatus status) {
+        Map<String, Object> param = Maps.newHashMap();
+        param.put("Id", oid);
+        param.put("Status", status.getCode());
+        dbUtil.getSqlSessionTemplate().update("orderMapper.updateOrder", param);
+
+        RedisStringCache.remove(Long.toString(uid), CacheType.ORDER);
+    }
+
 
     public void setSqlSessionTemplate(SqlSessionTemplate sqlSessionTemplate) {
         this.sqlSessionTemplate = sqlSessionTemplate;
@@ -212,6 +223,28 @@ public class DbUtil {
 //            // cache hit
 //            return JsonUtil.fromJsonArr(tradeS,TradeInfo.class);
 //        }
+    }
+
+
+    public static void saveTrade(int counterOId, MatchData md, OrderCmd orderCmd) {
+        if (orderCmd == null) {
+            return;
+        }
+        Map<String, Object> param = Maps.newHashMap();
+        param.put("Id", md.tid);
+        param.put("UId", orderCmd.uid);
+        param.put("Code", orderCmd.code);
+        param.put("Direction", orderCmd.direction.getDirection());
+        param.put("Price", md.price);
+        param.put("TCount", md.volume);
+        param.put("OId", counterOId);//高位为counterid)
+        param.put("Date", TimeFormatUtil.yyyyMMdd(md.timestamp));
+        param.put("Time", TimeFormatUtil.hhMMss(md.timestamp));
+        dbUtil.getSqlSessionTemplate().insert("orderMapper.saveTrade", param);
+
+        //更新缓存
+        RedisStringCache.remove(Long.toString(orderCmd.uid), CacheType.TRADE);
+
     }
 
     ////////////////////////////// Order ///////////////////////////////////////
