@@ -2,8 +2,11 @@ package com.alex.bean;
 
 import com.alex.bean.orderbook.GOrderBookImpl;
 import com.alex.bean.orderbook.IOrderBook;
+import com.alex.core.EngineCore;
+import com.alex.handler.match.StockMatchHandler;
 import com.alex.core.EngineApi;
 import com.alex.db.DbQuery;
+import com.alex.handler.BaseHandler;
 import com.alex.handler.pub.L1PubHandler;
 import com.alex.handler.risk.ExistRiskHandler;
 import com.alipay.remoting.exception.CodecException;
@@ -27,10 +30,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.dbutils.QueryRunner;
-import org.apache.qpid.proton.engine.BaseHandler;
-import org.eclipse.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import org.eclipse.collections.impl.map.mutable.primitive.ShortObjectHashMap;
 import thirdparty.bean.CmdPack;
+import thirdparty.bus.IBusSender;
+import thirdparty.bus.MqttBusSender;
 import thirdparty.checksum.ICheckSum;
 import thirdparty.codec.IBodyCodec;
 import thirdparty.codec.IMsgCodec;
@@ -111,8 +114,8 @@ public class EngineConfig {
 
 
         //2.撮合处理器(订单簿*****) 撮合/提供行情查询
-        IntObjectHashMap<IOrderBook> orderBookMap = new IntObjectHashMap<>();
-        db.queryAllStockCode().forEach(code -> orderBookMap.put(code, new GOrderBookImpl(code)));
+        HashMap<String, IOrderBook> orderBookMap = new HashMap<>();
+        db.queryAllStockCode().forEach(code -> orderBookMap.put((String) code, new GOrderBookImpl((String) code)));
         final BaseHandler matchHandler = new StockMatchHandler(orderBookMap);
 
         //3.发布处理器

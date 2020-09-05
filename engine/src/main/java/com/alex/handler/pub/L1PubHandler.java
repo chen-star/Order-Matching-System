@@ -10,13 +10,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
 import org.eclipse.collections.api.tuple.primitive.ShortObjectPair;
-import org.eclipse.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import org.eclipse.collections.impl.map.mutable.primitive.ShortObjectHashMap;
 import thirdparty.bean.CommonMsg;
 import thirdparty.hq.L1MarketData;
 import thirdparty.hq.MatchData;
 import thirdparty.order.CmdType;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static thirdparty.bean.MsgConstants.*;
@@ -79,7 +79,7 @@ public class L1PubHandler extends BaseHandler {
 
     public static final short HQ_ADDRESS = -1;
 
-    private void pubMarketData(IntObjectHashMap<L1MarketData> marketDataMap) {
+    private void pubMarketData(HashMap<String, L1MarketData> marketDataMap) {
         log.info(marketDataMap);
         byte[] serialize = null;
         try {

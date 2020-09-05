@@ -10,6 +10,8 @@ import org.eclipse.collections.api.set.MutableSet;
 import org.eclipse.collections.api.set.primitive.MutableLongSet;
 import thirdparty.order.CmdType;
 
+import java.util.HashSet;
+
 @Log4j2
 @RequiredArgsConstructor
 public class ExistRiskHandler extends BaseHandler {
@@ -18,7 +20,7 @@ public class ExistRiskHandler extends BaseHandler {
     private MutableLongSet uidSet;
 
     @NonNull
-    private MutableSet codeSet;
+    private HashSet<String> codeSet;
 
     //发布行情Event
     //新委托event

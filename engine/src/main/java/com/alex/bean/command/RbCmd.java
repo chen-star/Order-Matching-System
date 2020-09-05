@@ -10,6 +10,7 @@ import thirdparty.order.CmdType;
 import thirdparty.order.OrderDirection;
 import thirdparty.order.OrderType;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Builder
@@ -43,6 +44,6 @@ public class RbCmd {
     public CmdResultCode resultCode;
 
     // 保存行情
-    public IntObjectHashMap<L1MarketData> marketDataMap;
+    public HashMap<String, L1MarketData> marketDataMap;
 
 }
