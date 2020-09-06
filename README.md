@@ -48,6 +48,20 @@ OrderId Direction	Price		Time	Quantity
 
 ~~~
 
+### Demo
+
+Sell Stock
+
+![](img/Sell.png)
+
+Order Today
+
+![](img/order_today.png)
+
+Order History
+
+![](img/order_history.png)
+
 
 ## Architecture
 
